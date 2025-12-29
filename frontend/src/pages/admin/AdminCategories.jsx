@@ -49,9 +49,39 @@ const AdminCategories = () => {
     loadCategories();
   }, []);
 
+  // Helper function to generate slug from name
+  const generateSlug = (name) => {
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+  };
+
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormState((prev) => ({ ...prev, [name]: value }));
+    
+    // Auto-generate slug when name changes (only if slug is empty or matches previous name)
+    if (name === 'name' && (!formState.slug || formState.slug === generateSlug(formState.name))) {
+      setFormState((prev) => ({
+        ...prev,
+        name: value,
+        slug: generateSlug(value),
+      }));
+    } else if (name === 'slug') {
+      // Format slug input: lowercase, replace spaces with hyphens, remove invalid chars
+      const formattedSlug = value
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+      setFormState((prev) => ({ ...prev, [name]: formattedSlug }));
+    } else {
+      setFormState((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const resetForm = () => {
@@ -210,8 +240,11 @@ const AdminCategories = () => {
                   onChange={handleChange}
                   required
                   className="w-full px-5 py-3.5 bg-gray-900/50 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-200"
-                  placeholder="Ex: plomberie"
+                  placeholder="Ex: plomberie-sanitaire"
                 />
+                <p className="mt-1 text-xs text-gray-500">
+                  Généré automatiquement depuis le nom. Format: minuscules, tirets uniquement.
+                </p>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-300 mb-2">
