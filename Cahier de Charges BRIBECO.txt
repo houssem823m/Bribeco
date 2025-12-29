@@ -1,0 +1,507 @@
+🧾 Cahier des Charges — Site Web BRIBECO
+
+1. Présentation Générale du Projet
+Nom du site : BRIBECO
+ Type de site : Site vitrine + plateforme de réservation + paiement en ligne + système partenaires.
+Objectif principal :
+ Permettre aux clients :
+de découvrir les services,
+
+
+consulter les prix,
+
+
+réserver une intervention à domicile,
+
+
+payer directement via Stripe,
+
+
+suivre le statut de leur intervention.
+
+
+Permettre aux partenaires :
+de recevoir des missions,
+
+
+d’accepter ou refuser des interventions assignées.
+
+
+Permettre à l’administrateur :
+de gérer les catégories, services, prix, partenaires, assignations et paiements.
+
+
+Public cible :
+Particuliers (propriétaires, locataires).
+
+
+Interventions de dépannage (plomberie, électricité, serrurerie…).
+
+
+Zone géographique : À définir.
+
+2. Design et Charte Graphique
+Couleurs principales :
+Bleu : #007BFF
+
+
+Vert : #28A745
+
+
+Blanc : #FFFFFF
+
+
+Style graphique :
+Design moderne, épuré, professionnel
+
+
+Police : Poppins ou Roboto
+
+
+Icônes vectorielles (SVG)
+
+
+Boutons arrondis avec légère ombre
+
+
+Responsive Design :
+Compatible ordinateur / tablette / mobile
+
+
+Navigation fluide
+
+
+
+3. Structure du Site (Frontend)
+
+3.1 Page d’accueil (Home)
+Contenu :
+Navbar : logo, services, contact, Profil, Devenir partenaire, réservation
+
+
+Bannière : “Dépannage rapide 7j/7” + mini formulaire
+
+
+Section “Nos Services”
+
+
+Section “Pourquoi nous choisir ?”
+
+
+Section “Avis clients”
+
+
+Section “Contact rapide”
+
+
+Footer complet
+
+
+
+3.2 Pages secondaires
+Page Services (toutes catégories)
+
+
+Page Détail d’un service
+
+
+Page À propos
+
+
+Page Contact
+
+
+Mentions légales / politique de confidentialité
+
+
+
+3.3 Page Détail d’un Service
+Contient :
+Image + description
+
+
+Fourchette de prix
+
+
+Section “Ce prix inclut”
+
+
+Avis
+
+
+Formulaire de réservation :
+
+
+Informations personnelles
+
+
+Urgence
+
+
+Date + créneau
+
+
+Bouton Réserver et payer
+
+
+⚠ Si utilisateur non connecté → redirection vers Login / Inscription.
+
+3.4 Page Login / Inscription
+Email / mot de passe
+
+
+Mot de passe chiffré bcrypt
+
+
+Accès à l’espace utilisateur
+
+
+
+3.5 Page Profil Utilisateur
+Informations personnelles
+
+
+Historique de réservations
+
+
+Paiements
+
+
+Statut des interventions
+
+
+Bouton dans la navbar : “Devenir partenaire”
+
+
+
+3.6 Page "Devenir un Partenaire"
+Accessible via la navbar.
+Formulaire :
+Nom / prénom
+
+
+Email
+
+
+Téléphone
+
+
+CV (upload)
+
+
+Type de service (plombier, électricien…)
+
+
+Années d’expérience
+
+
+Message
+
+
+Traitement :
+Statut : en attente
+
+
+Affichage dans dashboard admin
+
+
+
+3.7 Dashboard Partenaire
+Accessible uniquement si role = partenaire.
+Fonctionnalités :
+Voir missions assignées
+
+
+Voir détails d’une mission
+
+
+Boutons :
+
+
+Accepter l’intervention
+
+
+Refuser l’intervention
+
+
+
+3.8 Dashboard Administrateur
+Vue d’ensemble
+
+
+Gestion catégories (CRUD)
+
+
+Gestion services (CRUD)
+
+
+Gestion réservations
+
+
+Assignation d’un partenaire
+
+
+Gestion paiements Stripe
+
+
+Gestion FAQ
+
+
+Gestion avis
+
+
+Gestion des demandes de partenariat
+
+
+Accepter → convertit utilisateur en partenaire
+
+
+Refuser
+
+
+
+4. Fonctionnalités principales
+✔ Authentification sécurisée (JWT / sessions)
+✔ Réservation complète
+✔ Paiement Stripe (Secure 3D)
+✔ Espace Client
+✔ Espace Partenaire
+✔ Dashboard Admin
+✔ Affectation partenaires
+✔ Historique des paiements
+✔ Gestion avis / FAQ
+
+5. Documentation Technique — Base de Données
+
+5.1 Enums
+Nom
+Valeurs
+Description
+users_role_enum
+client, admin, partenaire
+Rôles
+reservations_status_enum
+nouvelle, confirmée, en cours, terminée, annulée
+Statut intervention
+payment_status_enum
+en attente, payé, échoué, remboursé
+Paiement Stripe
+partner_request_status
+en attente, acceptée, refusée
+Demandes de partenariat
+partner_assignment_status
+envoyée, acceptée, refusée
+Réponse du partenaire
+
+
+5.2 Table users
+Champ
+Type
+Description
+id
+INT
+PK
+role
+users_role_enum
+Défaut : client
+first_name
+VARCHAR(100)
+—
+last_name
+VARCHAR(100)
+—
+email
+VARCHAR(150)
+UNIQUE
+phone
+VARCHAR(20)
+—
+password
+VARCHAR(255)
+Hash bcrypt
+created_at
+DATETIME
+—
+
+
+5.3 Table partner_requests
+Champ
+Type
+Description
+id
+INT
+PK
+user_id
+INT
+FK → users
+service_type
+VARCHAR(150)
+Métier
+experience_years
+INT
+Expérience
+cv_file
+VARCHAR(255)
+Nom fichier
+message
+TEXT
+—
+status
+partner_request_status
+—
+created_at
+DATETIME
+—
+
+
+5.4 Table partners
+Champ
+Type
+Description
+id
+INT
+PK
+user_id
+INT
+FK
+service_type
+VARCHAR(100)
+Métier
+verified
+BOOLEAN
+Partenaire validé
+created_at
+DATETIME
+—
+
+
+5.5 Table categories
+(identique à ton modèle)
+5.6 Table services
+(identique)
+
+5.7 Table reservations
+Ajout : assigned_partner & partner_status
+
+
+Champ
+Type
+Description
+id
+INT
+PK
+user_id
+INT
+FK
+service_id
+INT
+FK
+address
+VARCHAR(255)
+—
+postal_code
+VARCHAR(10)
+—
+description
+TEXT
+—
+urgent
+BOOLEAN
+—
+date_requested
+DATE
+—
+time_slot
+VARCHAR(50)
+—
+status
+reservations_status_enum
+—
+assigned_partner
+INT
+FK → partners.id
+partner_status
+partner_assignment_status
+—
+payment_id
+INT
+FK
+created_at
+DATETIME
+—
+
+
+5.8 Table partner_assignments
+Champ
+Type
+Description
+id
+INT
+PK
+reservation_id
+INT
+FK
+partner_id
+INT
+FK
+status
+partner_assignment_status
+état
+created_at
+DATETIME
+—
+
+
+5.9 Table payments
+(identique à ton modèle)
+
+5.10 Table testimonials
+(identique)
+
+5.11 Table faq
+(identique)
+
+6. Relations principales
+users ↔ reservations : 1 → N
+
+
+users ↔ partner_requests : 1 → 1
+
+
+users ↔ partners : 1 → 1
+
+
+reservations ↔ partner_assignments : 1 → N
+
+
+partners ↔ partner_assignments : 1 → N
+
+
+reservations ↔ payments : 1 → 1
+
+
+
+7. Sécurité & Stripe
+Aucun stockage de données bancaires
+
+
+Webhooks Stripe
+
+
+HTTPS obligatoire
+
+
+Mots de passe bcrypt
+
+
+Vérification des rôles pour actions sensibles
+
+
+
+8. Avantages
+✔ Solution complète et professionnelle
+ ✔ Gestion partenaire automatisée
+ ✔ Paiements sécurisés Stripe
+ ✔ Architecture évolutive
+ ✔ Système de réservation fiable
+

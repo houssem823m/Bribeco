@@ -1,0 +1,17 @@
+{
+  "name": "BRIBECO",
+  "short_name": "BRIBECO",
+  "description": "Plateforme de réservation et de gestion des interventions BRIBECO.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#007BFF",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
+

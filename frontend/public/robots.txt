@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api
+
+Sitemap: https://bribeco.com/sitemap.xml
+
